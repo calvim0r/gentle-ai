@@ -60,9 +60,11 @@ func RenderInstalling(progress InstallProgress, spinner string) string {
 		if len(progress.Logs) > 5 {
 			start = len(progress.Logs) - 5
 		}
-		for _, line := range progress.Logs[start:] {
-			b.WriteString(styles.SubtextStyle.Render("  " + line))
-			b.WriteString("\n")
+		for _, entry := range progress.Logs[start:] {
+			for _, line := range strings.Split(entry, "\n") {
+				b.WriteString(styles.SubtextStyle.Render("  " + line))
+				b.WriteString("\n")
+			}
 		}
 	}
 

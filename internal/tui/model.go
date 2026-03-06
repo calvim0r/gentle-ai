@@ -184,15 +184,20 @@ func (m Model) handlePipelineDone(msg PipelineDoneMsg) (tea.Model, tea.Cmd) {
 	m.Execution = msg.Result
 	m.pipelineRunning = false
 
-	// Mark any remaining pending items as done (edge case: empty pipeline).
-	if m.Progress.Percent() < 100 {
-		for i := range m.Progress.Items {
-			if m.Progress.Items[i].Status == ProgressStatusPending ||
-				m.Progress.Items[i].Status == ProgressStatusRunning {
-				m.Progress.Mark(i, string(pipeline.StepStatusSucceeded))
+	// Rebuild progress from real step results so failed steps show ✗ instead
+	// of being blindly marked as succeeded.
+	m.Progress = ProgressFromExecution(msg.Result)
+
+	// Surface individual error messages so the user knows WHAT failed.
+	appendStepErrors := func(steps []pipeline.StepResult) {
+		for _, step := range steps {
+			if step.Status == pipeline.StepStatusFailed && step.Err != nil {
+				m.Progress.AppendLog("FAILED: %s — %s", step.StepID, step.Err.Error())
 			}
 		}
 	}
+	appendStepErrors(msg.Result.Prepare.Steps)
+	appendStepErrors(msg.Result.Apply.Steps)
 
 	if msg.Result.Err != nil {
 		m.Progress.AppendLog("pipeline completed with errors")
@@ -241,7 +246,12 @@ func (m Model) View() string {
 	case ScreenInstalling:
 		return screens.RenderInstalling(m.Progress.ViewModel(), spinnerFrames[m.SpinnerFrame])
 	case ScreenComplete:
-		return screens.RenderComplete(len(m.Selection.Agents), len(m.Selection.Components))
+		return screens.RenderComplete(screens.CompletePayload{
+			ConfiguredAgents:    len(m.Selection.Agents),
+			InstalledComponents: len(m.Selection.Components),
+			FailedSteps:         extractFailedSteps(m.Execution),
+			RollbackPerformed:   len(m.Execution.Rollback.Steps) > 0,
+		})
 	case ScreenBackups:
 		return screens.RenderBackups(m.Backups, m.Cursor)
 	default:
@@ -580,6 +590,24 @@ func preselectedAgents(detection system.DetectionResult) []model.AgentID {
 	}
 
 	return selected
+}
+
+func extractFailedSteps(result pipeline.ExecutionResult) []screens.FailedStep {
+	var failed []screens.FailedStep
+	collect := func(steps []pipeline.StepResult) {
+		for _, step := range steps {
+			if step.Status == pipeline.StepStatusFailed {
+				errMsg := "unknown error"
+				if step.Err != nil {
+					errMsg = step.Err.Error()
+				}
+				failed = append(failed, screens.FailedStep{ID: step.StepID, Error: errMsg})
+			}
+		}
+	}
+	collect(result.Prepare.Steps)
+	collect(result.Apply.Steps)
+	return failed
 }
 
 func componentsForPreset(preset model.PresetID) []model.ComponentID {

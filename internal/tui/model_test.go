@@ -119,13 +119,75 @@ func TestPipelineDoneMsgMarksCompletion(t *testing.T) {
 	m.Progress = NewProgressState([]string{"step-x"})
 	m.Progress.Start(0)
 
-	// Simulate pipeline completion.
-	updated, _ := m.Update(PipelineDoneMsg{Result: pipeline.ExecutionResult{}})
+	// Simulate pipeline completion with a real step result.
+	result := pipeline.ExecutionResult{
+		Apply: pipeline.StageResult{
+			Success: true,
+			Steps: []pipeline.StepResult{
+				{StepID: "step-x", Status: pipeline.StepStatusSucceeded},
+			},
+		},
+	}
+	updated, _ := m.Update(PipelineDoneMsg{Result: result})
 	state := updated.(Model)
 
 	if state.pipelineRunning {
 		t.Fatalf("expected pipelineRunning = false")
 	}
+
+	if !state.Progress.Done() {
+		t.Fatalf("expected progress to be done")
+	}
+}
+
+func TestPipelineDoneMsgSurfacesFailedSteps(t *testing.T) {
+	m := NewModel(system.DetectionResult{}, "dev")
+	m.Screen = ScreenInstalling
+	m.pipelineRunning = true
+	m.Progress = NewProgressState([]string{"step-ok", "step-bad"})
+
+	result := pipeline.ExecutionResult{
+		Apply: pipeline.StageResult{
+			Success: false,
+			Err:     fmt.Errorf("step-bad failed"),
+			Steps: []pipeline.StepResult{
+				{StepID: "step-ok", Status: pipeline.StepStatusSucceeded},
+				{StepID: "step-bad", Status: pipeline.StepStatusFailed, Err: fmt.Errorf("skill inject: write failed")},
+			},
+		},
+		Err: fmt.Errorf("step-bad failed"),
+	}
+	updated, _ := m.Update(PipelineDoneMsg{Result: result})
+	state := updated.(Model)
+
+	if !state.Progress.HasFailures() {
+		t.Fatalf("expected HasFailures() = true")
+	}
+
+	// Verify that the error message appears in the logs.
+	found := false
+	for _, log := range state.Progress.Logs {
+		if contains(log, "skill inject: write failed") {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Fatalf("expected error detail in logs, got: %v", state.Progress.Logs)
+	}
+}
+
+func contains(s, substr string) bool {
+	return len(s) >= len(substr) && searchSubstring(s, substr)
+}
+
+func searchSubstring(s, substr string) bool {
+	for i := 0; i <= len(s)-len(substr); i++ {
+		if s[i:i+len(substr)] == substr {
+			return true
+		}
+	}
+	return false
 }
 
 func TestInstallingScreenManualFallbackWithoutExecuteFn(t *testing.T) {

@@ -437,7 +437,7 @@ func executeCommand(name string, args ...string) error {
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		if len(output) > 0 {
-			return fmt.Errorf("%w: %s", err, strings.TrimSpace(string(output)))
+			return fmt.Errorf("%w\noutput:\n%s", err, strings.TrimSpace(string(output)))
 		}
 		return err
 	}
