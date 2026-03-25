@@ -54,6 +54,7 @@ func TestAllEmbeddedAssetsAreReadable(t *testing.T) {
 		"skills/_shared/engram-convention.md",
 		"skills/_shared/openspec-convention.md",
 		"skills/_shared/sdd-phase-common.md",
+		"skills/_shared/SKILL.md",
 
 		// Foundation skills
 		"skills/go-testing/SKILL.md",
@@ -156,7 +157,7 @@ func TestEmbeddedAssetCount(t *testing.T) {
 			continue
 		}
 		if entry.Name() == "_shared" {
-			for _, sharedFile := range []string{"persistence-contract.md", "engram-convention.md", "openspec-convention.md", "sdd-phase-common.md"} {
+			for _, sharedFile := range []string{"persistence-contract.md", "engram-convention.md", "openspec-convention.md", "sdd-phase-common.md", "SKILL.md"} {
 				sharedPath := "skills/_shared/" + sharedFile
 				if _, err := Read(sharedPath); err != nil {
 					t.Fatalf("shared directory missing %q: %v", sharedFile, err)
