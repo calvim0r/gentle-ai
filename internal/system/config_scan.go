@@ -31,6 +31,7 @@ func knownAgentConfigDirs(homeDir string) []ConfigState {
 		{Agent: "cursor", Path: filepath.Join(homeDir, ".cursor")},
 		{Agent: "vscode-copilot", Path: vscodeCopilotGlobalConfigDir(homeDir)},
 		{Agent: "codex", Path: filepath.Join(homeDir, ".codex")},
+		{Agent: "kiro", Path: kiroGlobalConfigDir(homeDir)},
 	}
 }
 
@@ -39,6 +40,13 @@ func knownAgentConfigDirs(homeDir string) []ConfigState {
 // SystemPromptDir and SettingsPath are OS-dependent, but GlobalConfigDir is not.
 func vscodeCopilotGlobalConfigDir(homeDir string) string {
 	return filepath.Join(homeDir, ".copilot")
+}
+
+// kiroGlobalConfigDir returns ~/.kiro, the GlobalConfigDir used by the kiro
+// adapter across all platforms. Kiro's SystemPromptDir and SettingsPath are
+// OS-dependent, but GlobalConfigDir is not.
+func kiroGlobalConfigDir(homeDir string) string {
+	return filepath.Join(homeDir, ".kiro")
 }
 
 // ScanConfigs returns the presence state of every known managed agent's global

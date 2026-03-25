@@ -36,6 +36,9 @@ func TestAllEmbeddedAssetsAreReadable(t *testing.T) {
 		// Codex agent files
 		"codex/sdd-orchestrator.md",
 
+		// Kiro agent files
+		"kiro/sdd-orchestrator.md",
+
 		// SDD skills
 		"skills/sdd-init/SKILL.md",
 		"skills/sdd-apply/SKILL.md",
@@ -234,6 +237,7 @@ func TestSDDOrchestratorAssetsScopedToDedicatedAgent(t *testing.T) {
 		"claude/sdd-orchestrator.md",
 		"gemini/sdd-orchestrator.md",
 		"codex/sdd-orchestrator.md",
+		"kiro/sdd-orchestrator.md",
 	} {
 		t.Run(assetPath, func(t *testing.T) {
 			content := MustRead(assetPath)

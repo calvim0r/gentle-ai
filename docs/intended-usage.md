@@ -42,7 +42,7 @@ The agent handles all the phases internally. You just review and approve at key 
 
 Multi-mode lets you assign different AI models to different SDD phases -- for example, a powerful model for design and a faster one for implementation. This is an OpenCode-exclusive feature.
 
-For **all other agents** (Claude Code, Cursor, Gemini CLI, VS Code Copilot), SDD runs in single-mode automatically. One model handles everything, and that works perfectly fine.
+For **all other agents** (Claude Code, Cursor, Gemini CLI, VS Code Copilot, Kiro), SDD runs in single-mode automatically. One model handles everything, and that works perfectly fine.
 
 If you want multi-mode in OpenCode:
 

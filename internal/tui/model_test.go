@@ -356,7 +356,7 @@ func screensAgentOptions() []model.AgentID {
 // makeDetectionWithAgents builds a DetectionResult with the specified agents
 // marked as Exists=true. All other agents are absent.
 func makeDetectionWithAgents(present ...string) system.DetectionResult {
-	known := []string{"claude-code", "opencode", "gemini-cli", "cursor", "vscode-copilot", "codex"}
+	known := []string{"claude-code", "opencode", "gemini-cli", "cursor", "vscode-copilot", "codex", "kiro"}
 	presentSet := make(map[string]bool, len(present))
 	for _, p := range present {
 		presentSet[p] = true
@@ -408,6 +408,7 @@ func TestPreselectedAgents_AllSixAgentsMappedCorrectly(t *testing.T) {
 		{"cursor", model.AgentCursor},
 		{"vscode-copilot", model.AgentVSCodeCopilot},
 		{"codex", model.AgentCodex},
+		{"kiro", model.AgentKiro},
 	}
 
 	for _, tt := range tests {

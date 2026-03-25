@@ -23,7 +23,7 @@ internal/
     engram/  sdd/  skills/  mcp/  persona/  theme/  permissions/  gga/
     filemerge/             Marker-based file merging (inject without clobbering)
   agents/                  Agent adapters (config strategy per agent)
-    claude/  opencode/  gemini/  cursor/  vscode/
+    claude/  opencode/  gemini/  cursor/  vscode/  kiro/
   verify/                  Post-apply health checks + reporting
   tui/                     Bubbletea TUI (Rose Pine theme)
     styles/  screens/
@@ -66,7 +66,7 @@ Test coverage:
 | | Gentleman.Dots | AI Gentle Stack |
 |--|---------------|-----------------|
 | **Purpose** | Dev environment (editors, shells, terminals) | AI development layer (agents, memory, skills) |
-| **Installs** | Neovim, Fish/Zsh, Tmux/Zellij, Ghostty | Configures Claude Code, OpenCode, Gemini CLI, Cursor, VS Code Copilot |
+| **Installs** | Neovim, Fish/Zsh, Tmux/Zellij, Ghostty | Configures Claude Code, OpenCode, Gemini CLI, Cursor, VS Code Copilot, Kiro |
 | **Overlap** | None — complementary | None — different layer |
 
 Install Gentleman.Dots first for your dev environment, then AI Gentle Stack for the AI layer on top.

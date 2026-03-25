@@ -56,3 +56,4 @@ If the hash matches `checksums.txt`, the file is authentic for that release.
 | Gemini CLI | `%USERPROFILE%\.gemini\` |
 | Cursor | `%USERPROFILE%\.cursor\` |
 | VS Code Copilot | `%APPDATA%\Code\User\` (settings, MCP, prompts) + `%USERPROFILE%\.copilot\` (skills) |
+| Kiro | `%USERPROFILE%\.kiro\` (skills, steering, settings) + `%APPDATA%\Kiro\User\` (IDE settings) |

@@ -76,6 +76,7 @@ func TestScanConfigs_AgentFieldMatchesModelAgentID(t *testing.T) {
 		"cursor":         false,
 		"vscode-copilot": false,
 		"codex":          false,
+		"kiro":           false,
 	}
 
 	for _, c := range configs {
